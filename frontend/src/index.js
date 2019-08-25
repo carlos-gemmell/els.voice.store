@@ -1,4 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import MockWorkItemGraph from "./MockWorkItemGraph";
 
-ReactDOM.render(<div> eric </div>, document.getElementById("root"));
+ReactDOM.render(<MockWorkItemGraph/>, document.getElementById("root"));
