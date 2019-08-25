@@ -19,7 +19,7 @@ RUN apt-get install -y python3 python3-pip
 RUN apt-get install -y unzip
 RUN python3 -m pip install --upgrade pip
 RUN pip install --upgrade setuptools
-RUN pip3 install setuptools flask virtualenv gitpython
+RUN pip3 install setuptools flask virtualenv gitpython flask_jwt_extended
 
 # install node
 RUN apt-get install npm -y
