@@ -7,5 +7,4 @@ def hello():
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', 
-            port=80, 
-            ssl_context=('/etc/letsencrypt/live/elsvoicestore.org/fullchain.pem', '/etc/letsencrypt/live/elsvoicestore.org/privkey.pem'))
+            port=5000)
