@@ -1,3 +1,4 @@
+![Wireframe](images/wireframe.png "a mock wireframe of what the website should look like")
 ![voice wave](images/voice_wave.jpg)
 The official code repository for the ELS voice store web app.
 
