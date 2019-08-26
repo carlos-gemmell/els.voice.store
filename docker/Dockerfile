@@ -28,9 +28,9 @@ RUN apt-get install curl
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash
 RUN apt-get install nodejs -y
 RUN npm install -g npm
-RUN echo foo$CWD
-RUN npm install --prefix /my_shared/frontend 
-RUN npm run build --prefix /my_shared/frontend
+RUN npm install pm2 -g
+#RUN npm install --prefix /my_shared/frontend 
+#RUN npm run build --prefix /my_shared/frontend
 
 WORKDIR /my_shared
 RUN echo "YOUR INSTANCE IS READY :)"
