@@ -21,10 +21,16 @@ RUN python3 -m pip install --upgrade pip
 RUN pip install --upgrade setuptools
 RUN pip3 install setuptools flask virtualenv gitpython
 
+RUN echo hey5
 # install node
-RUN apt-get install npm -y
-RUN npm install pm2 -g
-RUN ln -s /usr/bin/nodejs /usr/bin/node
+WORKDIR /my_shared/frontend
+RUN apt-get install curl
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash
+RUN apt-get install nodejs -y
+RUN npm install -g npm
+RUN echo foo$CWD
+RUN npm install --prefix /my_shared/frontend 
+RUN npm run build --prefix /my_shared/frontend
 
 WORKDIR /my_shared
 RUN echo "YOUR INSTANCE IS READY :)"
