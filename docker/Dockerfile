@@ -19,7 +19,7 @@ RUN apt-get install -y python3 python3-pip
 RUN apt-get install -y unzip
 RUN python3 -m pip install --upgrade pip
 RUN pip install --upgrade setuptools
-RUN pip3 install setuptools flask virtualenv gitpython
+RUN pip3 install setuptools flask virtualenv gitpython flask_jwt_extended
 
 RUN echo hey5
 # install node
@@ -36,4 +36,4 @@ WORKDIR /my_shared
 RUN echo "YOUR INSTANCE IS READY :)"
 
 # on startup run init script
-#ENTRYPOINT /bin/bash --login -c "/my_shared/docker/init.sh" && /bin/bash
+ENTRYPOINT /bin/bash --login -c "bash /my_shared/docker/init.sh" && /bin/bash
