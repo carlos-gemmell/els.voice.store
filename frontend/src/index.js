@@ -1,5 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import MockWorkItemGraph from "./MockWorkItemGraph";
+import App from "./components/app";
 
-ReactDOM.render(<MockWorkItemGraph/>, document.getElementById("root"));
+ReactDOM.render(<App/>, document.getElementById("root"));
