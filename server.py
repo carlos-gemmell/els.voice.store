@@ -5,7 +5,7 @@ from flask_jwt_extended import (
     get_jwt_identity
 )
 
-app = Flask(__name__,static_folder="frontend/static")
+app = Flask(__name__,static_folder="frontend/dist")
 
 # Setup the Flask-JWT-Extended extension
 app.config['JWT_SECRET_KEY'] = 'the-wrong-trousers'  # this is our secret key
