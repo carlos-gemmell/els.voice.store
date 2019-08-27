@@ -5,10 +5,10 @@ class mainHeader extends React.Component {
 	render() {
 		return (
 			<div className="mainHeader" style={{"width":"100%","height":"12.5%"}}>
-				<div style={{"width":"100%","height":"2.5%"}} className="welcomeMessage">
+				<img src={logo} style={{"width":"50%", "height":"100%", "object-fit":"contain", "float":"left"}}/>
+				<div style={{"width":"50%","height":"100%", "float":"right", "vertical-align":"bottom"}} className="welcomeMessage">
 					Hi { this.props.username }!
 				</div>
-				<img src={logo} />
 			</div>
 		);
 	}
