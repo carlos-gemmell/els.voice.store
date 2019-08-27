@@ -61,6 +61,7 @@ def loadStatic():
 	return send_from_directory("frontend/","main.js")
 
 @app.route("/upload",methods=['POST'])
+@jwt_required
 def uploadFile():
     print("files",request.files.get("data"))
     name = "foobar.wav"

@@ -48,8 +48,12 @@ class mainHeader extends React.Component {
 		console.log("url",uploadUrl);
 		var fd = new FormData();
 		fd.append('data', blob);
+		console.log("aut","Bearer "+this.props.jwt);
 		fetch(uploadUrl, {
 			method: 'post',
+			headers: {
+				'Authorization':'Bearer ' + this.props.jwt
+			}, 
 			body: fd,
 		})
 			.then(response => console.log("response",response))
