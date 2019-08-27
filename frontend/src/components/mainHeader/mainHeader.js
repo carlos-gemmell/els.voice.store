@@ -1,5 +1,5 @@
 import React from "react";
-
+import logo from '../../images/logo.png';
 class mainHeader extends React.Component {
 
 	render() {
@@ -8,6 +8,7 @@ class mainHeader extends React.Component {
 				<div style={{"width":"100%","height":"2.5%"}} className="welcomeMessage">
 					Hi { this.props.username }!
 				</div>
+				<img src={logo} />
 			</div>
 		);
 	}
