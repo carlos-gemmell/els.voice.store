@@ -36,4 +36,5 @@ WORKDIR /my_shared
 RUN echo "YOUR INSTANCE IS READY :)"
 
 # on startup run init script
+COPY rand_file.txt /temp_stuff
 ENTRYPOINT /bin/bash --login -c "bash /my_shared/docker/init.sh" && /bin/bash

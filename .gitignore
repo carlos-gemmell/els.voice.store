@@ -29,3 +29,6 @@ Temporary Items
 
 # npm stuff
 npm-debug.log
+
+# Docker stuff
+rand_file.txt
