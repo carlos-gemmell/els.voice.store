@@ -7,6 +7,7 @@ from flask_jwt_extended import (
 
 from utils.get_url import generate_signed_url
 from utils.send_file import upload_blob
+import os
 
 app = Flask(__name__)
 
@@ -61,10 +62,24 @@ import base64
 
 @app.route("/upload",methods=['POST'])
 def uploadFile():
-	print("files",request.files.get("data"))
-	with open("test.wav", 'wb+') as destination:
-		destination.write(request.files.get('data').read())
-	return "HEYO YOU UPLOADED DA FILE!"
+    print("files",request.files.get("data"))
+    name = "foobar.wav"
+
+    dirName = 'temp'
+    
+    try:
+        # Create target Directory
+        os.mkdir(dirName)
+        print("Directory " , dirName ,  " Created ") 
+    except FileExistsError:
+        print("Directory " , dirName ,  " already exists")
+
+
+    with open("temp/"+name, 'wb+') as destination:
+        destination.write(request.files.get('data').read())
+    upload_blob("els_voice_store_audio", "temp/"+name, name)
+    os.remove("temp/"+name)
+    return "HEYO YOU UPLOADED DA FILE!"
 
 @app.route('/get_audio', methods=['POST'])
 @jwt_required
