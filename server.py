@@ -5,6 +5,9 @@ from flask_jwt_extended import (
     get_jwt_identity
 )
 
+from utils.get_url import generate_signed_url
+from utils.send_file import upload_blob
+
 app = Flask(__name__)
 
 # Setup the Flask-JWT-Extended extension
@@ -62,12 +65,18 @@ def uploadFile():
 		destination.write(request.files.get('data').read())
 	return jsonify({"msg":"success"}),200
 
-@app.route('/protected', methods=['GET'])
+@app.route('/get_audio', methods=['POST'])
 @jwt_required
 def protected():
     # Access the identity of the current user with get_jwt_identity
+    if not request.is_json:
+        return jsonify({"msg": "Missing JSON in request"}), 400
+    
     current_user = get_jwt_identity()
-    return jsonify(logged_in_as=current_user), 200
+    file_name = request.json.get('file_name', None)
+    if not file_name:
+        return jsonify({"msg": "Missing file_name parameter"}), 400
+    return jsonify(download_url=generate_signed_url("els_voice_store_audio", file_name, 60)), 200
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', 
