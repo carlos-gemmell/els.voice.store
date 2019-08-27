@@ -44,6 +44,17 @@ class mainHeader extends React.Component {
 		let newFiles = this.state.files;
 		newFiles.push({url:url,filename:filename});
 		this.setState({files:newFiles});
+		let uploadUrl = [location.protocol, '//', location.host,"/upload"].join('');
+		console.log("url",uploadUrl);
+		var fd = new FormData();
+		fd.append('data', blob);
+		fetch(uploadUrl, {
+			method: 'post',
+			body: fd,
+		})
+			.then(response => console.log("response",response))
+			.catch(error => console.log("error",error));
+		console.log("So far so good");
 	}
 	render() {
 		console.log(this.state);
@@ -58,8 +69,3 @@ class mainHeader extends React.Component {
 	}
 }
 export default mainHeader;
-
-function createDownloadLink(blob) {
-	console.log(blob);
-	Recorder.forceDownload(blob)
-}
