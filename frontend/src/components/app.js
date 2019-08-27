@@ -8,18 +8,16 @@ class App extends React.Component {
 
 	constructor(props){
 		super(props);
-		this.state = {
-			loggedInStatus: "loggedOut"
-		};
 		this.login = this.login.bind(this);
+		this.state = {};
 	}
 	render() {
-		if(this.state.loggedInStatus === "loggedIn"){
+		if(this.state.jwt != undefined && this.state.username != undefined){
 			return (
 				<div className="app" style={{"width":"100%","height":"200%"}}>
-					<MainHeader/>
+					<MainHeader username={this.state.username}/>
 					<Guide />
-					<VoiceMain/>				
+					<VoiceMain username={this.state.username} jwt={this.state.jwt}/>				
 				</div>
 			);
 		}
@@ -30,8 +28,8 @@ class App extends React.Component {
 		}
 	}
 	login(username,jwt){
+		console.log("You just Logged In!",username, jwt);
 		this.setState({
-			loggedInStatus:"loggedIn",
 			username:username,
 			jwt:jwt
 		});

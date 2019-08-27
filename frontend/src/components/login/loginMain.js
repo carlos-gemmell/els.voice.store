@@ -12,17 +12,16 @@ class Login extends React.Component {
 		fetch(uploadUrl, {
 			method: 'post',	
 			headers: {'Content-Type':'application/json'},
-			body: {
-				"username": this.username.value,
-				"password": this.password.value
-			}
-		})
-			.then(response => {
-				console.log("prejson",response);
-				return response.json();
+			body: JSON.stringify({
+				username: this.username.value,
+				password: this.password.value
 			})
+		})
+			.then(response => response.json())
 			.then(data => {
-				console.log(data);
+				if(data["access_token"] != undefined){
+					this.props.login(this.username.value,data["access_token"])
+				}
 				
 			});
 			
