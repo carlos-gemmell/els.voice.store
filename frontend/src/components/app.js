@@ -9,7 +9,7 @@ class App extends React.Component {
 	constructor(props){
 		super(props);
 		this.login = this.login.bind(this);
-		this.state = {username:"Mark Gemmell",jwt:"u"};
+		this.state = {};
 	}
 	render() {
 		if(this.state.jwt != undefined && this.state.username != undefined){
