@@ -7,7 +7,7 @@ class App extends React.Component {
 
 	render() {
 		return (
-			<div className="app" style={{"width":"100%","height":"200%"}}>
+			<div className="app" style={{"width":"100%","height":"200%","backgroundColor":"#d2ea9b"}}>
 				<MainHeader/>
 				<Guide />
 				<VoiceMain/>				
