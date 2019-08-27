@@ -25,11 +25,13 @@ def validate_user(username, password):
 # it to the caller however you choose.
 @app.route('/login', methods=['POST'])
 def login():
+    print("got login request")
     if not request.is_json:
         return jsonify({"msg": "Missing JSON in request"}), 400
 
     username = request.json.get('username', None)
     password = request.json.get('password', None)
+    print(username,password)
     if not username:
         return jsonify({"msg": "Missing username parameter"}), 400
     if not password:
@@ -54,14 +56,11 @@ def hello():
 def loadStatic():
 	return send_from_directory("frontend/","main.js")
 
-import base64
-
 @app.route("/upload",methods=['POST'])
 def uploadFile():
-	print("files",request.files.get("data"))
 	with open("test.wav", 'wb+') as destination:
 		destination.write(request.files.get('data').read())
-	return "HEYO YOU UPLOADED DA FILE!"
+	return jsonify({"msg":"success"}),200
 
 @app.route('/protected', methods=['GET'])
 @jwt_required
