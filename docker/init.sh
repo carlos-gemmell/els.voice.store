@@ -8,4 +8,4 @@ npm install
 npm run build
 
 cd /my_shared
-pm2 start server.py --interpreter=python3 --watch
+pm2 start server.py --interpreter=python3 

@@ -18,7 +18,9 @@
     "@babel/preset-react": "^7.0.0",
     "babel-loader": "^8.0.6",
     "d3": "^5.11.0",
+    "file-loader": "^4.2.0",
     "inline-worker": "^0.1.0",
+    "url-loader": "^2.1.0",
     "webpack": "^4.39.2",
     "webpack-cli": "^3.3.7"
   },

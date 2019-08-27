@@ -34,6 +34,7 @@ npm-debug.log
 
 # Docker stuff
 rand_file.txt
+temp
 
 # google credentials
 els-voice-store-cloud-project*
