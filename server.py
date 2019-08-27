@@ -57,6 +57,14 @@ def hello():
 def loadStatic():
 	return send_from_directory("frontend/","main.js")
 
+import base64
+
+@app.route("/upload",methods=['POST'])
+def uploadFile():
+	print("files",request.files.get("data"))
+	with open("test.wav", 'wb+') as destination:
+		destination.write(request.files.get('data').read())
+	return "HEYO YOU UPLOADED DA FILE!"
 
 @app.route('/get_audio', methods=['POST'])
 @jwt_required
