@@ -4,10 +4,12 @@ class mainHeader extends React.Component {
 
 	render() {
 		return (
-			<div className="mainHeader" style={{"width":"100%","height":"12.5%"}}>
-				<img src={logo} style={{"width":"50%", "height":"100%", "object-fit":"contain", "float":"left"}}/>
-				<div style={{"width":"50%","height":"100%", "float":"right", "vertical-align":"bottom"}} className="welcomeMessage">
+			<div className="mainHeader" style={{"width":"100%","height":"12.5%","overflow":"hidden"}}>
+				<img src={logo} style={{"width":"50%", "height":"100%", "objectFit":"contain", "float":"left"}}/>
+				<div style={{"float":"right", "verticalAlign":"middle", "padding":"2%", "width":"40%","height":"80%"}} className="welcomeMessage">
+					<div>
 					Hi { this.props.username }!
+					</div>
 				</div>
 			</div>
 		);
