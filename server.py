@@ -7,7 +7,9 @@ from flask_jwt_extended import (
 
 from utils.get_url import generate_signed_url
 from utils.send_file import upload_blob
+from utils.list_objects import list_blobs_with_prefix
 import os
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -35,7 +37,6 @@ def login():
 
     username = request.json.get('username', None)
     password = request.json.get('password', None)
-    print(username,password)
     if not username:
         return jsonify({"msg": "Missing username parameter"}), 400
     if not password:
@@ -64,9 +65,10 @@ def loadStatic():
 @jwt_required
 def uploadFile():
     print("files",request.files.get("data"))
-    name = "foobar.wav"
+    name = get_jwt_identity() + "_" + datetime.now().strftime("%d-%m-%Y_%H-%M-%S") + ".txt"
 
     dirName = 'temp'
+    print(name)
     
     try:
         # Create target Directory
@@ -82,6 +84,15 @@ def uploadFile():
     os.remove("temp/"+name)
     return "HEYO YOU UPLOADED DA FILE!"
 
+@app.route("/list_from_user", methods=["POST"])
+@jwt_required
+def list_files():
+    username = get_jwt_identity()
+    names = list_blobs_with_prefix("els_voice_store_audio", username)
+    print("user {} requested audio names".format(username))
+    print(names)
+    return jsonify(file_names=names)
+
 @app.route('/get_audio', methods=['POST'])
 @jwt_required
 def protected():
@@ -90,6 +101,7 @@ def protected():
         return jsonify({"msg": "Missing JSON in request"}), 400
     
     current_user = get_jwt_identity()
+    print(current_user)
     file_name = request.json.get('file_name', None)
     if not file_name:
         return jsonify({"msg": "Missing file_name parameter"}), 400
