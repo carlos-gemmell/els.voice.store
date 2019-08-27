@@ -5,7 +5,7 @@ from flask_jwt_extended import (
     get_jwt_identity
 )
 
-app = Flask(__name__,static_folder="frontend/dist")
+app = Flask(__name__)
 
 # Setup the Flask-JWT-Extended extension
 app.config['JWT_SECRET_KEY'] = 'the-wrong-trousers'  # this is our secret key
@@ -45,14 +45,14 @@ def login():
 
 @app.route("/")
 def hello():
-	with open("frontend/dist/index.html","r") as indexPage: 
+	with open("frontend/index.html","r") as indexPage: 
 		return indexPage.read()
 	return "Could not load file..."
 
 
-@app.route('/<path:filename>')
-def loadStatic(filename):
-	return send_from_directory(app.static_folder,filename)
+@app.route('/main.js')
+def loadStatic():
+	return send_from_directory("frontend/","main.js")
 
 
 @app.route('/protected', methods=['GET'])

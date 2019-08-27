@@ -1,57 +1,55 @@
 import React from "react";
-import { ReactMic } from 'react-mic';
+import Recorder from "./recorder";
 
 class mainHeader extends React.Component {
 
-	constructor(props) {
+	AudioContext = window.AudioContext || window.webkitAudioContext;
+
+	constructor(props){
 		super(props);
-		this.state = {
-			record: false
-		}
-		this.startRecording = this.startRecording.bind(this);	
+		this.startRecording = this.startRecording.bind(this);
 		this.stopRecording = this.stopRecording.bind(this);
 	}
-
 	startRecording(){
-		this.setState({
-			record: true
+		console.log("recordButton clicked");
+		navigator.mediaDevices.getUserMedia({ audio: true, video:false }).then((stream) => {
+			let audioContext = new this.AudioContext();	
+			console.log("Audio Context",this.AudioContext)
+			console.log("audio context", audioContext);
+			console.log("sample rate",audioContext.sampleRate);
+
+			let gumStream = stream;
+			let input = audioContext.createMediaStreamSource(stream);
+			let rec = new Recorder(input,{numChannels:1})
+
+			//start the recording process
+			rec.record()
+
+			console.log("Recording started");
+			setTimeout(() =>{
+				rec.stop();
+				gumStream.getAudioTracks()[0].stop();
+				rec.exportWAV(createDownloadLink);
+			}, 3000);
+			
 		});
 	}
-
 	stopRecording(){
-		this.setState({
-			record: false
-		});
-	}
 
-	onData(recordedBlob) {
-		console.log('chunk of real-time data is: ', recordedBlob);
 	}
-
-	onStop(recordedBlob) {
-		console.log('recordedBlob is: ', recordedBlob);
-	}
-
 	render() {
 		console.log(this.state);
 		return (
 			<div className={"voiceMain"} style={{"width":"100%","height":"72.5%"}}>
 				VOICE SECTION!!!!
-				<div>
-					<ReactMic
-						record={this.state.record}
-						className="sound-wave"
-						onStop={this.onStop}
-						onData={this.onData}
-						strokeColor="#000000"
-						backgroundColor="#FF4081" 
-					/>
-					<button onClick={this.startRecording} type="button">Start</button>
-					<button onClick={this.stopRecording} type="button">Stop</button>
-				</div>
+				<button onClick={this.startRecording} type="button">Start</button>
+				<button onClick={this.stopRecording} type="button">Stop</button>
 			</div>
 	       );
 	}
 }
 export default mainHeader;
 
+function createDownloadLink(blob) {
+	Recorder.forceDownload(blob)
+}
