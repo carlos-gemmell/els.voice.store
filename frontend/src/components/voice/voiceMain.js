@@ -22,15 +22,13 @@ class voiceMain  extends React.Component {
 		this.setState({ files: newFiles, selected: selected});
 	}
 	upload(selected){
+		selected["uploaded"] = true;
+		this.setState({selected: selected});
 		let uploadUrl = [location.protocol, '//', location.host,"/upload"].join('');
 		var fd = new FormData();
 		fd.append('data', selected.blob);
 		fetch(uploadUrl, { method: 'post', headers: { 'Authorization':'Bearer ' + this.props.jwt }, body: fd})
 			.then(response => console.log("response",response))
-			.then(() => {
-				selected["uploaded"] = true;
-				this.setState({selected: selected});
-			})
 			.catch(error => console.log("error",error));
 	}
 	playAudio(url){
@@ -42,10 +40,10 @@ class voiceMain  extends React.Component {
 		console.log((!this.state.selected.uploaded)?"1":"0.5")
 		return (
 			<div className={"voiceMain"} style={{"width":"100%","height":"72.5%"}}>
-				<div style={{"width":"50%","height":"20%","float":"left"}}>
+				<div style={{"width":"65%","height":"20%","float":"left"}}>
 					<RecorderButton addAudioFile={this.addAudioFile}/>
 				</div>
-				<div style={{"width":"50%","height":"20%","float":"left"}}>
+				<div style={{"width":"35%","height":"20%","float":"left"}}>
 					<img style={{"height":"50%","opacity":(this.state.selected.blob)?"1":"0.5"}}
 						onClick={(this.state.selected.blob)? () =>  this.playAudio(this.state.selected.url) : () => {} }
 						src={playButtonImage}
