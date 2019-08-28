@@ -29,12 +29,13 @@ class Login extends React.Component {
 	}
 	render() {
 		let input_style = {
-			"padding": "12px 20px",
+			"padding": "1vh 3vh",
 			"margin": "8px 0",
 			"display": "inline-block",
 			"border": "1px solid #ccc",
-			"border-radius": "4px",
-			"box-sizing": "border-box"
+			"border-radius": "4vh",
+			"box-sizing": "border-box",
+			"font-size": "2vh"
 		}
 		return (
 			<div className="LoginPageMain" style={{"height":"100%","width":"100%"}}>
@@ -42,7 +43,7 @@ class Login extends React.Component {
 					Log into ELS Voice Store
 				</div> */}
 				<img src={logo} style={{"width":"50%", "height":"100%", "left":"25%", "display":"block", "objectFit":"contain", "float":"center", "position":"absolute"}}/>
-				<div className="LoginForm" style={{"text-align":"center", "top":"20%", "width":"100%","height":"80%", "position":"absolute"}}>
+				<div className="LoginForm" style={{"text-align":"center", "top":"10%", "width":"100%","height":"80%", "position":"absolute"}}>
 					<div className="usernameInput" style={{}}>
 						<div className="usernameLabel">
 							Username
@@ -55,7 +56,7 @@ class Login extends React.Component {
 						</div>
 						<input ref={(password) => this.password = password} style={input_style} type="password" placeholder="Enter Password" name="password"/>
 					</div>
-					<button onClick={this.loginButtonClick} >Login</button>
+					<button style={{"font-size": "2vh"}} onClick={this.loginButtonClick} >Login</button>
 				</div>
 			</div>
 		);
