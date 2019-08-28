@@ -1,75 +1,62 @@
 import React from "react";
-import Recorder from "./recorder";
-var URL = window.URL || window.webkitURL;
+import RecorderButton from "./recorderButton";
+import uploadImage from "../../images/upload.png";
+import playButtonImage from "../../images/playButton.png"
 
-let AudioContext = window.AudioContext || window.webkitAudioContext;
-let rec;
-let gumStream;
-
-class mainHeader extends React.Component {
+class voiceMain  extends React.Component {
 
 	constructor(props){
 		super(props);
 		this.state = {
-			files: []
-		}
-		this.startRecording = this.startRecording.bind(this);
-		this.stopRecording = this.stopRecording.bind(this);
+			files: [],
+			selected: {url:"",title:"",uploaded:true}
+		};
 		this.addAudioFile = this.addAudioFile.bind(this);
+		this.upload = this.upload.bind(this);
 	}
-	startRecording(){
-		navigator.mediaDevices.getUserMedia({ audio: true, video:false }).then((stream) => {
-			let audioContext = new AudioContext();	
-			console.log("sample rate",audioContext.sampleRate);
-
-			gumStream = stream;
-			let input = audioContext.createMediaStreamSource(stream);
-			rec = new Recorder(input,{numChannels:1})
-
-			//start the recording process
-			rec.record()
-
-			console.log("Recording started");
-			
-		});
-	}
-	stopRecording(){
-		rec.stop();
-		gumStream.getAudioTracks()[0].stop();
-		rec.exportWAV(this.addAudioFile);
-	}
-	addAudioFile(blob){
-		let url = URL.createObjectURL(blob);
-		let filename = new Date().toISOString();
+	addAudioFile(blob,url){
+		console.log("Adding Audio File");
 		let newFiles = this.state.files;
-		newFiles.push({url:url,filename:filename});
-		this.setState({files:newFiles});
+		newFiles.push({url:url, blob: blob});
+		let selected = {url:url,blob:blob, title:"newly created audio file",uploaded:false}
+		this.setState({ files: newFiles, selected: selected});
+	}
+	upload(selected){
 		let uploadUrl = [location.protocol, '//', location.host,"/upload"].join('');
-		console.log("url",uploadUrl);
 		var fd = new FormData();
-		fd.append('data', blob);
-		console.log("aut","Bearer "+this.props.jwt);
-		fetch(uploadUrl, {
-			method: 'post',
-			headers: {
-				'Authorization':'Bearer ' + this.props.jwt
-			}, 
-			body: fd,
-		})
+		fd.append('data', selected.blob);
+		fetch(uploadUrl, { method: 'post', headers: { 'Authorization':'Bearer ' + this.props.jwt }, body: fd})
 			.then(response => console.log("response",response))
+			.then(() => {
+				selected["uploaded"] = true;
+				this.setState({selected: selected});
+			})
 			.catch(error => console.log("error",error));
-		console.log("So far so good");
+	}
+	playAudio(url){
+		let audio = new Audio(url);
+		audio.play();
 	}
 	render() {
-		console.log(this.state);
+		console.log(this.state.selected.uploaded);
+		console.log((!this.state.selected.uploaded)?"1":"0.5")
 		return (
 			<div className={"voiceMain"} style={{"width":"100%","height":"72.5%"}}>
-				VOICE SECTION!!!!
-				<button onClick={this.startRecording} type="button">Start</button>
-				<button onClick={this.stopRecording} type="button">Stop</button>
-				{this.state.files.map((file) =>(<audio autoplay="true" controls="true" src={file.url}/>))}
+				<div style={{"width":"50%","height":"20%","float":"left"}}>
+					<RecorderButton addAudioFile={this.addAudioFile}/>
+				</div>
+				<div style={{"width":"50%","height":"20%","float":"left"}}>
+					<img style={{"height":"50%","opacity":(this.state.selected.blob)?"1":"0.5"}}
+						onClick={(this.state.selected.blob)? () =>  this.playAudio(this.state.selected.url) : () => {} }
+						src={playButtonImage}
+					/><br/>
+					<img style={{"height":"50%","opacity":(!this.state.selected.uploaded)?"1":"0.5"}}
+						onClick={ (!this.state.selected.uploaded)?() => this.upload(this.state.selected):() => {} }
+						src={uploadImage}
+					/>
+				</div>
 			</div>
 	       );
 	}
 }
-export default mainHeader;
+export default voiceMain;
