@@ -6,6 +6,7 @@ class Login extends React.Component {
 	constructor(props){
 		super(props);
 		this.loginButtonClick = this.loginButtonClick.bind(this);
+		this.state = {"bg_color":"white"}
 	}
 	loginButtonClick(){
 		console.log("Trying to log in");
@@ -23,7 +24,9 @@ class Login extends React.Component {
 				if(data["access_token"] != undefined){
 					this.props.login(this.username.value,data["access_token"])
 				}
-				
+				console.log("error occured");
+				this.setState({"bg_color":"#ffcccc"});
+
 			});
 			
 	}
@@ -35,7 +38,8 @@ class Login extends React.Component {
 			"border": "1px solid #ccc",
 			"border-radius": "4vh",
 			"box-sizing": "border-box",
-			"font-size": "2vh"
+			"font-size": "2vh",
+			"background-color":this.state.bg_color
 		}
 		return (
 			<div className="LoginPageMain" style={{"height":"100%","width":"100%"}}>

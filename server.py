@@ -65,7 +65,7 @@ def loadStatic():
 @jwt_required
 def uploadFile():
     print("files",request.files.get("data"))
-    name = get_jwt_identity() + "_" + datetime.now().strftime("%d-%m-%Y_%H-%M-%S") + ".txt"
+    name = get_jwt_identity() + "_" + datetime.now().strftime("%d-%m-%Y_%H-%M-%S") + ".wav"
 
     dirName = 'temp'
     print(name)
