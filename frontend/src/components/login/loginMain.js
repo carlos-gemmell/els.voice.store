@@ -24,7 +24,6 @@ class Login extends React.Component {
 				if(data["access_token"] != undefined){
 					this.props.login(this.username.value,data["access_token"])
 				}
-				console.log("error occured");
 				this.setState({"bg_color":"#ffcccc"});
 
 			});

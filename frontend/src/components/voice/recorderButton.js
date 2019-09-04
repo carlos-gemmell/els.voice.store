@@ -20,7 +20,6 @@ class RecorderButton extends React.Component {
 		this.stopRecording = this.stopRecording.bind(this);
 	}
 	startRecording(){
-		console.log("Starting Recording");
 		navigator.mediaDevices.getUserMedia({ audio: true, video:false }).then((stream) => {
 			let audioContext = new AudioContext();	
 
@@ -43,7 +42,6 @@ class RecorderButton extends React.Component {
 		
 	}
 	render() {
-		console.log(this.state);
 		return (
 			<img style={{"height":"100%", "width": "auto" ,"float":"right"}} className="RecordingButton" 
 				onClick={ (this.state.recording)?this.stopRecording:this.startRecording } 
@@ -55,10 +53,3 @@ class RecorderButton extends React.Component {
 }
 export default RecorderButton;
 
-//			let uploadUrl = [location.protocol, '//', location.host,"/upload"].join('');
-//			var fd = new FormData();
-//			fd.append('data', blob);
-//			fetch(uploadUrl, { method: 'post', headers: { 'Authorization':'Bearer ' + this.props.jwt }, body: fd})
-//				.then(response => console.log("response",response))
-//				.catch(error => console.log("error",error));
-//			console.log("So far so good");
