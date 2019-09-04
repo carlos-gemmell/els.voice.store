@@ -4,7 +4,7 @@ class mainHeader extends React.Component {
 
 	render() {
 		return (
-			<div className="mainHeader" style={{"width":"100%","height":"12.5%","overflow":"hidden"}}>
+			<div className="mainHeader" style={{"width":"100%","height":"6%","overflow":"hidden","backgroundColor":"white"}}>
 				<img src={logo} style={{"width":"50%", "height":"100%", "objectFit":"contain", "float":"left"}}/>
 				<div style={{"float":"right", "verticalAlign":"middle", "padding":"2%", "width":"40%","height":"80%"}} className="welcomeMessage">
 					<div>
