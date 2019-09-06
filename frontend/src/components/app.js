@@ -30,7 +30,7 @@ class App extends React.Component {
 
 	render() {
 		const { width } = this.state;
-  		const isMobile = width <= 500;
+  		const isMobile = width <= 900;
 		if(this.state.jwt != undefined && this.state.username != undefined){
 			if (isMobile) {
 				return (
