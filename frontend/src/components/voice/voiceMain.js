@@ -56,6 +56,7 @@ class voiceMain  extends React.Component {
 						<RecorderButton addAudioFile={this.addAudioFile}/>
 					</div>
 					<div style={{"width":"40%","height":"100%","float":"left"}}>
+						{this.state.selected}
 						<img style={{"height":"50%","opacity": (playable)?"1":"0.5"}}
 							onClick={ (playable)? () =>  this.playAudio() : () => {} }
 							src={playButtonImage}
@@ -66,7 +67,7 @@ class voiceMain  extends React.Component {
 						/>
 					</div>
 				</div>
-				<AudioFiles files={this.state.files} selectFile={this.selectFile} />
+				<AudioFiles jwt={this.props.jwt} files={this.state.files} selectFile={this.selectFile} />
 			</div>
 	       );
 	}
