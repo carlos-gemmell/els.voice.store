@@ -30,37 +30,42 @@ class Login extends React.Component {
 			
 	}
 	render() {
-		let input_style = {
-			"padding": "1vh 3vh",
-			"margin": "8px 0",
-			"display": "inline-block",
-			"border": "1px solid #ccc",
-			"border-radius": "4vh",
-			"box-sizing": "border-box",
-			"font-size": "2vh",
-			"background-color":this.state.bg_color
-		}
+		let labelStyle = {
+			"fontFamily":"Arial",
+			"fontWeight":"bold", 
+			"fontSize":"30px",
+			"textAlign":"center"
+		};
+		let inputStyle = {
+			"width":"100%",
+			"height":"40px",
+			"border":"1px solid #ccc",
+			"borderRadius":"25px",
+			"textAlign":"center",
+			"backgroundColor":this.state.bg_color
+		};
 		return (
-			<div className="LoginPageMain" style={{"height":"100%","width":"100%"}}>
-				{/* <div className="LoginHeader" style={{"width":"100%","height":"20%","fontSize":"5vw","textAlign":"center"}}>
-					Log into ELS Voice Store
-				</div> */}
-				<img src={logo} style={{"width":"50%", "height":"100%", "left":"25%", "display":"block", "objectFit":"contain", "float":"center", "position":"absolute"}}/>
-				<div className="LoginForm" style={{"text-align":"center", "top":"10%", "width":"100%","height":"80%", "position":"absolute"}}>
-					<div className="usernameInput" style={{}}>
-						<div className="usernameLabel">
+			<div className="LoginPageMain" style={{"width":"100%","height":"100%", "minHeight":"600px","maxHeight":"1080px"}}>
+				<div className="LoginForm" style={{"width":"30%", "minWidth":"250px","maxWidth":"450px", "display": "block", "marginLeft": "auto", "marginRight": "auto","paddingTop":"50px"}}>
+					<div className="usernameInput" style={{"paddingBottom":"20px"}}>
+						<div className="usernameLabel" style={labelStyle}>
 							Username
 						</div>
-						<input ref={(username) => this.username = username} style={input_style} type="text" placeholder="Enter Username" name="username"/>
+						<input ref={(username) => this.username = username} style={inputStyle} type="text" placeholder="Enter Username" name="username"/>
 					</div>
-					<div className="passwordInput" style={{}}>
-						<div className="passwordLabel">
+					<div className="passwordInput" style={{"paddingBottom":"20px"}}>
+						<div className="passwordLabel" style={labelStyle}>
 							Password
 						</div>
-						<input ref={(password) => this.password = password} style={input_style} type="password" placeholder="Enter Password" name="password"/>
+						<input ref={(password) => this.password = password} style={inputStyle} type="password" placeholder="Enter Password" name="password"/>
 					</div>
-					<button style={{"font-size": "2vh"}} onClick={this.loginButtonClick} >Login</button>
+					<button style={{"width":"50%", "minWidth":"50px","maxWidth":"100px", "display": "block", "marginLeft": "auto", "marginRight": "auto","fontSize": "15px"}} 
+						onClick={this.loginButtonClick} 
+					>
+						Login
+					</button>
 				</div>
+				<img src={logo} style={{"width":"100%", "minWidth":"350px","maxWidth":"700px", "display": "block", "marginLeft": "auto", "marginRight": "auto"}}/>
 			</div>
 		);
 	}

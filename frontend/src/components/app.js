@@ -14,45 +14,23 @@ class App extends React.Component {
 		};
 	}
 
-	componentWillMount() {
-		window.addEventListener('resize', this.handleWindowSizeChange);
-	}
-	
-	// make sure to remove the listener
-	// when the component is not mounted anymore
-	componentWillUnmount() {
-		window.removeEventListener('resize', this.handleWindowSizeChange);
-	}
-	
-	handleWindowSizeChange = () => {
-		this.setState({ width: window.innerWidth });
-	};
-
 	render() {
 		const { width } = this.state;
   		const isMobile = width <= 900;
 		if(this.state.jwt != undefined && this.state.username != undefined){
-			if (isMobile) {
-				return (
-					<div className="app" style={{"width":"100%","height":"200%","backgroundColor":"#2f52a2","font-family":"Arial","font-weight":"bold"}}>
-						<MainHeader username={this.state.username}/>
-						<Guide />
-						<VoiceMain username={this.state.username} jwt={this.state.jwt}/>				
-					</div>
-				);
-			} else {
-				return (
-					<div className="app" style={{"width":"60%","height":"200%","backgroundColor":"#2f52a2","font-family":"Arial","font-weight":"bold", "margin-left":"auto", "margin-right":"auto"}}>
-						<MainHeader username={this.state.username}/>
-						<Guide />
-						<VoiceMain username={this.state.username} jwt={this.state.jwt}/>				
-					</div>
-				);
-			}
+			return (
+				<div className="app" style={{"width":"100%","minWidth":"700px","maxWidth":"1080px","height":"200%", "minHeight":"1700px", "margin":"0 auto", 
+					"backgroundColor":"#2f52a2","font-family":"Arial","font-weight":"bold"}}
+				>
+					<MainHeader username={this.state.username}/>
+					<Guide />
+					<VoiceMain username={this.state.username} jwt={this.state.jwt}/>				
+				</div>
+			);
 		}
 		else{
 			return (
-				<div className="app" style={{"width":"100%","height":"100%","backgroundColor":"white","font-family":"Arial","font-weight":"bold", "font-size":"3vh"}}>
+				<div className="app" style={{"width":"100%","height":"100%"}}>
 					<Login login={this.login}/>	
 				</div>
 			);
