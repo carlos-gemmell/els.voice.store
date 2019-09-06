@@ -67,7 +67,7 @@ class voiceMain  extends React.Component {
 						/>
 					</div>
 				</div>
-				<AudioFiles jwt={this.props.jwt} files={this.state.files} selectFile={this.selectFile} />
+				<AudioFiles jwt={this.props.jwt} selected={this.state.selected} files={this.state.files} selectFile={this.selectFile} />
 			</div>
 	       );
 	}
