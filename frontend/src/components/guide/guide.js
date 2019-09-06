@@ -22,7 +22,7 @@ class guide extends React.Component {
 	
 	render() {
 		return (
-			<div className={"guide"} style={{"transition": "max-height 3000ms ease-in-out", "overflow":"hidden", "width":"100%","height":"auto", "max-height":this.state["max-height"]}}>
+			<div className={"guide"} style={{"transition": "max-height 3000ms ease-in-out", "overflow":"hidden", "width":"98%","height":"auto", "max-height":this.state["max-height"], "border-style":"solid","border-color": "white", "margin":"0.5%"}}>
 				<button style={{"font-size": "2vh"}} onClick={this.toggle_height} >Expand</button>
 				Guide to use the application:<br />
 				1 - do something <br />
