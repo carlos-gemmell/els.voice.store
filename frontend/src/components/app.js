@@ -10,17 +10,14 @@ class App extends React.Component {
 		super(props);
 		this.login = this.login.bind(this);
 		this.state = {
-			width: window.innerWidth,
 		};
 	}
 
 	render() {
-		const { width } = this.state;
-  		const isMobile = width <= 900;
-		if(this.state.jwt != undefined && this.state.username != undefined){
+		if(true || (this.state.jwt != undefined && this.state.username != undefined)){
 			return (
-				<div className="app" style={{"width":"100%","minWidth":"700px","maxWidth":"1080px","height":"200%", "minHeight":"1700px", "margin":"0 auto", 
-					"backgroundColor":"#2f52a2","font-family":"Arial","font-weight":"bold"}}
+				<div className="app" style={{"width":"100%","minWidth":"300px","maxWidth":"700px","height":"200%", "minHeight":"1700px", "margin":"0 auto", 
+					"backgroundColor":"#2f52a2","font-family":"Arial"}}
 				>
 					<MainHeader username={this.state.username}/>
 					<Guide />
