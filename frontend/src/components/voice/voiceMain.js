@@ -3,6 +3,7 @@ import RecorderButton from "./recorderButton";
 import AudioFiles from "./audioFiles";
 import uploadImage from "../../images/upload.png";
 import playButtonImage from "../../images/playButton.png"
+import fft from "fft-js"; 
 
 class voiceMain  extends React.Component {
 
@@ -15,13 +16,90 @@ class voiceMain  extends React.Component {
 		this.addAudioFile = this.addAudioFile.bind(this);
 		this.upload = this.upload.bind(this);
 		this.selectFile = this.selectFile.bind(this);
+		this.get_CPPS_from_blob = this.get_CPPS_from_blob.bind(this);
+		this.zip = this.zip.bind(this);
+		this.linearRegression = this.linearRegression.bind(this);
 	}
 	addAudioFile(blob,url){
 		let newFiles = this.state.files;
 		let selected = {url:url,blob:blob, name:"newly created audio file",uploaded:false}
 		newFiles.push(selected);
 		this.setState({ files: newFiles, selected: newFiles.length - 1});
+		console.log("finished recording")
+
+		// calculate CPPS after recording has concluded
+		this.get_CPPS_from_blob(blob)
 	}
+
+	get_CPPS_from_blob(blob){
+		// get arrayBuffer from blob
+		console.log("getting audio file for CPPS calc")
+		let fileReader = new FileReader();
+
+		fileReader.readAsArrayBuffer(blob);
+		fileReader.onload = (event) => {
+			let arrayBuffer = fileReader.result;
+			console.log(arrayBuffer);
+			let typedArray = new Uint8Array(arrayBuffer);
+			let array = Array.from(typedArray);
+			console.log(array);
+			let s = [1,0,1,0];
+			console.log(s)
+			array = array.concat(Array((Math.pow(2, Math.ceil(Math.log2(array.length))) - array.length)).fill(0));
+			console.log(array);
+			let phasors= fft.fft(array);
+			console.log("Phasors are:", phasors);
+			phasors = phasors.slice(0,65536)
+			console.log("Chopped Phasors are:", phasors);
+
+			
+
+			let frequencies = fft.util.fftFreq(phasors, 8000) // Sample rate and coef is just used for length, and frequency step
+			let magnitudes = fft.util.fftMag(phasors); 
+
+			console.table(this.zip([frequencies, magnitudes]));
+			
+			let signal= fft.ifft(phasors);
+
+			console.log("ifft signal is: ",signal);
+
+			let lr = this.linearRegression(signal.map(r => r[0]), [...Array(signal.length).keys()])
+
+			console.log(lr)
+		  };
+	}
+
+	zip(arrays){
+		return arrays[0].map(function(_,i){
+			return arrays.map(function(array){return array[i]})
+		});
+	}
+
+	linearRegression(y,x){
+        var lr = {};
+        var n = y.length;
+        var sum_x = 0;
+        var sum_y = 0;
+        var sum_xy = 0;
+        var sum_xx = 0;
+        var sum_yy = 0;
+
+        for (var i = 0; i < y.length; i++) {
+
+            sum_x += x[i];
+            sum_y += y[i];
+            sum_xy += (x[i]*y[i]);
+            sum_xx += (x[i]*x[i]);
+            sum_yy += (y[i]*y[i]);
+        } 
+
+        lr['slope'] = (n * sum_xy - sum_x * sum_y) / (n*sum_xx - sum_x * sum_x);
+        lr['intercept'] = (sum_y - lr.slope * sum_x)/n;
+        lr['r2'] = Math.pow((n*sum_xy - sum_x*sum_y)/Math.sqrt((n*sum_xx-sum_x*sum_x)*(n*sum_yy-sum_y*sum_y)),2);
+
+        return lr;
+	}
+
 	upload(){
 		let updatedFiles = this.state.files;
 		updatedFiles[this.state.selected].uploaded = true;
