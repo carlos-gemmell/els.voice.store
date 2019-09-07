@@ -27,7 +27,6 @@ class RecorderButton extends React.Component {
 			let input = audioContext.createMediaStreamSource(stream);
 			rec = new Recorder(input,{numChannels:1});
 			rec.record();
-		}).then(() => {
 			this.setState({recording:true});
 		});
 	}
@@ -43,11 +42,19 @@ class RecorderButton extends React.Component {
 	}
 	render() {
 		return (
-			<img style={{"height":"100%", "width": "auto" ,"float":"right"}} className="RecordingButton" 
-				onClick={ (this.state.recording)?this.stopRecording:this.startRecording } 
-				touchEnd={ (this.state.recording)?this.stopRecording:this.startRecording } 
-				src={ (this.state.recording)?activeMicrophone:deactivatedMicrophone}
-			/>
+			<div style={{"width":"100%","height":"100%"}}>
+				<div style={{"height":"5%","width":"100%"}}></div>
+				<img style={{"height":"90%", "width": "100%","objectFit":"contain"}} className="RecordingButton" 
+					onClick={ (this.state.recording)?this.stopRecording:this.startRecording } 
+					touchEnd={ (this.state.recording)?this.stopRecording:this.startRecording } 
+					src={ (this.state.recording)?activeMicrophone:deactivatedMicrophone}
+				/>
+				<div style={{"height":"5%","width":"100%","color":"white","fontSize":"20px","textAlign":"center"}}>
+				</div>
+				<div style={{"position":"relative","fontWeight":"bold","bottom":"40px","color":"white","fontSize":"30px","textAlign":"center"}}>
+					{!this.state.recording?"Record Audio":""}
+				</div>
+			</div>
 	       );
 	}
 }

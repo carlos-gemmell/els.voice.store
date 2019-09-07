@@ -45,7 +45,7 @@ class Login extends React.Component {
 			"backgroundColor":this.state.bg_color
 		};
 		return (
-			<div className="LoginPageMain" style={{"width":"100%","height":"100%", "minHeight":"600px","maxHeight":"1080px"}}>
+			<div className="LoginPageMain" style={{"width":"100%","height":"100%", "minHeight":"600px","maxHeight":"1080px","backgroundColor":"white"}}>
 				<div className="LoginForm" style={{"width":"30%", "minWidth":"250px","maxWidth":"450px", "display": "block", "marginLeft": "auto", "marginRight": "auto","paddingTop":"50px"}}>
 					<div className="usernameInput" style={{"paddingBottom":"20px"}}>
 						<div className="usernameLabel" style={labelStyle}>

@@ -14,7 +14,7 @@ class AudioFiles extends React.Component {
 		this.state = {
 			page: 0,
 			rowsPerPage: 10,
-			rowsPerPageOptions:[10,25,100],
+			rowsPerPageOptions:[10],
 		}
 	}
 	selectFile(index){
@@ -44,7 +44,9 @@ class AudioFiles extends React.Component {
 	}
 	render(){
 		return (
-			<div style={{"width":"100%","height":"80%","overflow":"auto"}}>
+			<div className="recordButton" style={{"width":"96%","maxHeight":"50%",
+				 "margin":"2%","border":"solid white","borderWidth":"1px", "overflow":"auto"}}
+			>
 				<Table stickyHeader>
 					<TableHead >
 						<TableRow>
@@ -69,6 +71,7 @@ class AudioFiles extends React.Component {
 					</TableBody>
 				</Table>
 				<TablePagination
+					style={{"border":"1px solid rgba(0,0,0,0.3)","backgroundColor":"lightgrey"}}
 					rowsPerPageOptions={this.state.rowsPerPageOptions}
 					component="div"
 					count={this.props.files.length}

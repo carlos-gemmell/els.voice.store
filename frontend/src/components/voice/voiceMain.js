@@ -1,17 +1,23 @@
 import React from "react";
 import RecorderButton from "./recorderButton";
 import AudioFiles from "./audioFiles";
-import uploadImage from "../../images/upload.png";
-import playButtonImage from "../../images/playButton.png"
+import uploadImage from "../../images/whiteUploadCloud.png";
+import activeUploadImage from "../../images/redUploadCloud.png";
+import playButtonImage from "../../images/whitePlay.png";
+import activePlayButtonImage from "../../images/redPlay.png";
 import fft from "fft-js"; 
+import WidgetGraph from "./graph/widgetGraph";
 
-class voiceMain  extends React.Component {
+class VoiceMain  extends React.Component {
 
 	constructor(props){
 		super(props);
 		this.state = {
 			files: [],
-			selected: -1
+			selected: -1,
+			playing: false,
+			uploading: false,
+			audio: new Audio()
 		};
 		this.addAudioFile = this.addAudioFile.bind(this);
 		this.upload = this.upload.bind(this);
@@ -32,32 +38,22 @@ class voiceMain  extends React.Component {
 	}
 
 	get_CPPS_from_blob(blob){
-		// get arrayBuffer from blob
-		console.log("getting audio file for CPPS calc")
 		let fileReader = new FileReader();
 
 		fileReader.readAsArrayBuffer(blob);
 		fileReader.onload = (event) => {
 			let arrayBuffer = fileReader.result;
-			console.log(arrayBuffer);
 			let typedArray = new Uint8Array(arrayBuffer);
 			let array = Array.from(typedArray);
-			console.log(array);
 			let s = [1,0,1,0];
-			console.log(s)
 			array = array.concat(Array((Math.pow(2, Math.ceil(Math.log2(array.length))) - array.length)).fill(0));
-			console.log(array);
 			let phasors= fft.fft(array);
-			console.log("Phasors are:", phasors);
 			phasors = phasors.slice(0,65536)
-			console.log("Chopped Phasors are:", phasors);
 
 			
 
 			let frequencies = fft.util.fftFreq(phasors, 8000) // Sample rate and coef is just used for length, and frequency step
 			let magnitudes = fft.util.fftMag(phasors); 
-
-			console.table(this.zip([frequencies, magnitudes]));
 			
 			let cepstrum= fft.ifft(phasors);
 
@@ -76,6 +72,7 @@ class voiceMain  extends React.Component {
 			console.log("max_cepstrum is:", cepstrum[arg_max_cepstrum][0])
 
 			console.log("Normalised CPPs is:", 100*CPPs_val/cepstrum[arg_max_cepstrum][0], "%")
+
 		  };
 	}
 
@@ -115,19 +112,27 @@ class voiceMain  extends React.Component {
 	}
 
 	upload(){
-		let updatedFiles = this.state.files;
-		updatedFiles[this.state.selected].uploaded = true;
-		this.setState({files : updatedFiles});
+		this.setState({uploading: true});
 		let uploadUrl = [location.protocol, '//', location.host,"/upload"].join('');
 		var fd = new FormData();
 		fd.append('data', this.state.files[this.state.selected].blob);
 		fetch(uploadUrl, { method: 'post', headers: { 'Authorization':'Bearer ' + this.props.jwt }, body: fd})
-			.then(response => console.log("upload file response",response))
-			.catch(error => console.log("upload file error",error));
+			.then(response => {
+				let updatedFiles = this.state.files;
+				updatedFiles[this.state.selected].uploaded = true;
+				this.setState({files : updatedFiles, uploading:false});
+			})
+			.catch(error => {
+				this.setState({uploading:false});
+				console.log("upload file error",error);
+			});
 	}
 	playAudio(){
+		this.state.audio.pause();
 		let audio = new Audio(this.state.files[this.state.selected].url);
 		audio.play();
+		audio.onended = () => this.setState({playing: false});
+		this.setState({audio: audio, playing:true});
 	}
 	selectFile(newFile, selected){
 		let newFiles = this.state.files;
@@ -143,20 +148,46 @@ class voiceMain  extends React.Component {
 		}
 		return (
 			<div className={"voiceMain"} style={{"width":"100%","height":"72.5%"}}>
-				<div style={{"width":"100%","height":"20%"}}>
-					<div style={{"width":"60%","height":"100%","float":"left"}}>
-						<RecorderButton addAudioFile={this.addAudioFile}/>
-					</div>
-					<div style={{"width":"40%","height":"100%","float":"left"}}>
-						{this.state.selected}
-						<img style={{"height":"50%","opacity": (playable)?"1":"0.5"}}
-							onClick={ (playable)? () =>  this.playAudio() : () => {} }
-							src={playButtonImage}
-						/><br/>
-						<img style={{"height":"50%","opacity": (uploadable) ?"1":"0.5"}}
-							onClick={ (uploadable)?() => this.upload():() => {} }
-							src={uploadImage}
+				<div className="recordButton" style={{"width":"96%","height":"20%",
+					"margin":"2%","border":"solid white","borderWidth":"1px"}}
+				>
+					<RecorderButton addAudioFile={this.addAudioFile}/>
+				</div>
+				<div className="analysisSection" style={{"width":"96%" ,"height":"18%",
+					"margin":"2%","border":"solid white","borderWidth":"1px"}}
+				>
+					<div style={{"height":"70%","width":"50%","float":"left"}}>
+						<div style={{"height":"7%","width":"100%"}}/>
+						<img style={{"height":"68%","width":"100%","objectFit":"contain","opacity": (playable)?"1":"0.5"}}
+							onClick={ (playable && !this.state.playing)? () =>  this.playAudio() : () => {} }
+							src={this.state.playing?activePlayButtonImage:playButtonImage}
 						/>
+						<div style={{"height":"25%","width":"100%","overflow":"hidden","fontWeight":"bold","color":"white","fontSize":"30px","textAlign":"center"}}>
+							{playable?"Play Audio":""}
+						</div>	
+					</div>
+					<div style={{"height":"70%","width":"50%","float":"left"}}>
+						<div style={{"height":"7%","width":"100%"}}/>
+						<img style={{"height":"68%","width":"100%","objectFit":"contain","float":"left","opacity": (uploadable) ?"1":"0.5"}}
+							onClick={ (uploadable && !this.state.uploading)?() => this.upload():() => {} }
+							src={this.state.uploading?activeUploadImage:uploadImage}
+						/>
+						<div style={{"height":"25%","width":"100%","overflow":"hidden","fontWeight":"bold","color":"white","fontSize":"30px","textAlign":"center"}}>
+							{uploadable?"Upload Audio":""}
+						</div>	
+					</div>
+					<div style={{"height":"30%","width":"96%","marginLeft":"2%","marginRight":"2%","float":"left"}}>
+						<div style={{"height":"10%","width":"100%","float":"left"}}/>
+						<div style={{"height":"80%","width":"33%","float":"left"}}>
+							<WidgetGraph />
+						</div>
+						<div style={{"height":"80%","width":"33%","float":"left"}}>
+							<WidgetGraph />
+						</div>
+						<div style={{"height":"80%","width":"33%","float":"left"}}>
+							<WidgetGraph />
+						</div>
+						<div style={{"height":"10%","width":"100%","float":"left"}}/>
 					</div>
 				</div>
 				<AudioFiles jwt={this.props.jwt} selected={this.state.selected} files={this.state.files} selectFile={this.selectFile} />
@@ -170,7 +201,6 @@ class voiceMain  extends React.Component {
 				return response.json();
 			})
 			.then(responseJson => {
-				console.log(responseJson);
 				let newFiles = this.state.files;
 				responseJson.file_names.forEach(name => {
 					newFiles.push({name: name, uploaded: true})
@@ -180,4 +210,4 @@ class voiceMain  extends React.Component {
 			.catch(error => console.log("file list error", error));
 	}
 }
-export default voiceMain;
+export default VoiceMain;
