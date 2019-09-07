@@ -1,8 +1,10 @@
 import React from "react";
 import RecorderButton from "./recorderButton";
 import AudioFiles from "./audioFiles";
-import uploadImage from "../../images/upload.png";
-import playButtonImage from "../../images/playButton.png"
+import uploadImage from "../../images/whiteUploadCloud.png";
+import activeUploadImage from "../../images/redUploadCloud.png";
+import playButtonImage from "../../images/whitePlay.png";
+import activePlayButtonImage from "../../images/redPlay.png";
 
 class voiceMain  extends React.Component {
 
@@ -10,7 +12,10 @@ class voiceMain  extends React.Component {
 		super(props);
 		this.state = {
 			files: [],
-			selected: -1
+			selected: -1,
+			playing: false,
+			uploading: false,
+			audio: new Audio()
 		};
 		this.addAudioFile = this.addAudioFile.bind(this);
 		this.upload = this.upload.bind(this);
@@ -23,19 +28,28 @@ class voiceMain  extends React.Component {
 		this.setState({ files: newFiles, selected: newFiles.length - 1});
 	}
 	upload(){
-		let updatedFiles = this.state.files;
-		updatedFiles[this.state.selected].uploaded = true;
-		this.setState({files : updatedFiles});
+		this.setState({uploading: true});
 		let uploadUrl = [location.protocol, '//', location.host,"/upload"].join('');
 		var fd = new FormData();
 		fd.append('data', this.state.files[this.state.selected].blob);
 		fetch(uploadUrl, { method: 'post', headers: { 'Authorization':'Bearer ' + this.props.jwt }, body: fd})
-			.then(response => console.log("upload file response",response))
-			.catch(error => console.log("upload file error",error));
+			.then(response => {
+				let updatedFiles = this.state.files;
+				updatedFiles[this.state.selected].uploaded = true;
+				this.setState({files : updatedFiles, uploading:true});
+				console.log("upload file response",response);
+			})
+			.catch(error => {
+				this.setState({uploading:true});
+				console.log("upload file error",error);
+			});
 	}
 	playAudio(){
+		this.state.audio.pause();
 		let audio = new Audio(this.state.files[this.state.selected].url);
 		audio.play();
+		audio.onended = () => this.setState({playing: false});
+		this.setState({audio: audio, playing:true});
 	}
 	selectFile(newFile, selected){
 		let newFiles = this.state.files;
@@ -51,20 +65,33 @@ class voiceMain  extends React.Component {
 		}
 		return (
 			<div className={"voiceMain"} style={{"width":"100%","height":"72.5%"}}>
-				<div style={{"width":"100%","height":"20%"}}>
-					<div style={{"width":"60%","height":"100%","float":"left"}}>
-						<RecorderButton addAudioFile={this.addAudioFile}/>
-					</div>
-					<div style={{"width":"40%","height":"100%","float":"left"}}>
-						{this.state.selected}
-						<img style={{"height":"50%","opacity": (playable)?"1":"0.5"}}
-							onClick={ (playable)? () =>  this.playAudio() : () => {} }
-							src={playButtonImage}
-						/><br/>
-						<img style={{"height":"50%","opacity": (uploadable) ?"1":"0.5"}}
-							onClick={ (uploadable)?() => this.upload():() => {} }
-							src={uploadImage}
+				<div className="recordButton" style={{"width":"96%","height":"24%",
+					"margin":"2%","border":"solid white","borderWidth":"1px"}}
+				>
+					<RecorderButton addAudioFile={this.addAudioFile}/>
+				</div>
+				<div className="analysisSection" style={{"width":"96%" ,"height":"18%",
+					"margin":"2%","border":"solid white","borderWidth":"1px"}}
+				>
+					<div style={{"height":"70%","width":"50%","float":"left"}}>
+						<div style={{"height":"7%","width":"100%"}}/>
+						<img style={{"height":"68%","width":"100%","objectFit":"contain","opacity": (playable)?"1":"0.5"}}
+							onClick={ (playable && !this.state.playing)? () =>  this.playAudio() : () => {} }
+							src={this.state.playing?activePlayButtonImage:playButtonImage}
 						/>
+						<div style={{"height":"25%","width":"100%","overflow":"hidden","fontWeight":"bold","color":"white","fontSize":"30px","textAlign":"center"}}>
+							{playable?"Play Audio":""}
+						</div>	
+					</div>
+					<div style={{"height":"70%","width":"50%","float":"left"}}>
+						<div style={{"height":"7%","width":"100%"}}/>
+						<img style={{"height":"68%","width":"100%","objectFit":"contain","float":"left","opacity": (uploadable) ?"1":"0.5"}}
+							onClick={ (uploadable && !this.state.uploading)?() => this.upload():() => {} }
+							src={this.state.uploading?activeUploadImage:uploadImage}
+						/>
+						<div style={{"height":"25%","width":"100%","overflow":"hidden","fontWeight":"bold","color":"white","fontSize":"30px","textAlign":"center"}}>
+							{uploadable?"Upload Audio":""}
+						</div>	
 					</div>
 				</div>
 				<AudioFiles jwt={this.props.jwt} selected={this.state.selected} files={this.state.files} selectFile={this.selectFile} />
