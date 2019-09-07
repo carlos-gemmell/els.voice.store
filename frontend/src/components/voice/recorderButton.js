@@ -27,7 +27,6 @@ class RecorderButton extends React.Component {
 			let input = audioContext.createMediaStreamSource(stream);
 			rec = new Recorder(input,{numChannels:1});
 			rec.record();
-		}).then(() => {
 			this.setState({recording:true});
 		});
 	}
@@ -52,7 +51,7 @@ class RecorderButton extends React.Component {
 				/>
 				<div style={{"height":"5%","width":"100%","color":"white","fontSize":"20px","textAlign":"center"}}>
 				</div>
-				<div style={{"position":"relative","fontWeight":"bold","bottom":"35px","color":"white","fontSize":"30px","textAlign":"center"}}>
+				<div style={{"position":"relative","fontWeight":"bold","bottom":"40px","color":"white","fontSize":"30px","textAlign":"center"}}>
 					{!this.state.recording?"Record Audio":""}
 				</div>
 			</div>

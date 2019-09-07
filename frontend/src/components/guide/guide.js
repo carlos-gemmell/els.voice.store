@@ -5,18 +5,18 @@ class guide extends React.Component {
 	constructor(props){
 		super(props);
 		this.state = {
-			"maxHeight":"7.5%",
+			"maxHeight":"5%",
 		}
 		this.toggle_height = this.toggle_height.bind(this)
 	}
 
 
 	toggle_height(){
-		if (this.state["maxHeight"] == "7.5%"){
-			this.setState({"maxHeight":"600%"});
+		if (this.state["maxHeight"] == "5%"){
+			this.setState({"maxHeight":"15%"});
 		}
 		else{
-			this.setState({"maxHeight":"7.5%"});
+			this.setState({"maxHeight":"5%"});
 		}
 	}
 	

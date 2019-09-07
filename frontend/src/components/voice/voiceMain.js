@@ -5,8 +5,10 @@ import uploadImage from "../../images/whiteUploadCloud.png";
 import activeUploadImage from "../../images/redUploadCloud.png";
 import playButtonImage from "../../images/whitePlay.png";
 import activePlayButtonImage from "../../images/redPlay.png";
+import fft from "fft-js"; 
+import WidgetGraph from "./graph/widgetGraph";
 
-class voiceMain  extends React.Component {
+class VoiceMain  extends React.Component {
 
 	constructor(props){
 		super(props);
@@ -20,13 +22,76 @@ class voiceMain  extends React.Component {
 		this.addAudioFile = this.addAudioFile.bind(this);
 		this.upload = this.upload.bind(this);
 		this.selectFile = this.selectFile.bind(this);
+		this.get_CPPS_from_blob = this.get_CPPS_from_blob.bind(this);
+		this.zip = this.zip.bind(this);
+		this.linearRegression = this.linearRegression.bind(this);
 	}
 	addAudioFile(blob,url){
 		let newFiles = this.state.files;
 		let selected = {url:url,blob:blob, name:"newly created audio file",uploaded:false}
 		newFiles.push(selected);
 		this.setState({ files: newFiles, selected: newFiles.length - 1});
+		console.log("finished recording")
+
+		// calculate CPPS after recording has concluded
+		this.get_CPPS_from_blob(blob)
 	}
+
+	get_CPPS_from_blob(blob){
+		let fileReader = new FileReader();
+
+		fileReader.readAsArrayBuffer(blob);
+		fileReader.onload = (event) => {
+			let arrayBuffer = fileReader.result;
+			let typedArray = new Uint8Array(arrayBuffer);
+			let array = Array.from(typedArray);
+			let s = [1,0,1,0];
+			array = array.concat(Array((Math.pow(2, Math.ceil(Math.log2(array.length))) - array.length)).fill(0));
+			let phasors= fft.fft(array);
+			phasors = phasors.slice(0,65536)
+
+			
+
+			let frequencies = fft.util.fftFreq(phasors, 8000) // Sample rate and coef is just used for length, and frequency step
+			let magnitudes = fft.util.fftMag(phasors); 
+			
+			let signal= fft.ifft(phasors);
+
+			let lr = this.linearRegression(signal.map(r => r[0]), [...Array(signal.length).keys()])
+		  };
+	}
+
+	zip(arrays){
+		return arrays[0].map(function(_,i){
+			return arrays.map(function(array){return array[i]})
+		});
+	}
+
+	linearRegression(y,x){
+        var lr = {};
+        var n = y.length;
+        var sum_x = 0;
+        var sum_y = 0;
+        var sum_xy = 0;
+        var sum_xx = 0;
+        var sum_yy = 0;
+
+        for (var i = 0; i < y.length; i++) {
+
+            sum_x += x[i];
+            sum_y += y[i];
+            sum_xy += (x[i]*y[i]);
+            sum_xx += (x[i]*x[i]);
+            sum_yy += (y[i]*y[i]);
+        } 
+
+        lr['slope'] = (n * sum_xy - sum_x * sum_y) / (n*sum_xx - sum_x * sum_x);
+        lr['intercept'] = (sum_y - lr.slope * sum_x)/n;
+        lr['r2'] = Math.pow((n*sum_xy - sum_x*sum_y)/Math.sqrt((n*sum_xx-sum_x*sum_x)*(n*sum_yy-sum_y*sum_y)),2);
+
+        return lr;
+	}
+
 	upload(){
 		this.setState({uploading: true});
 		let uploadUrl = [location.protocol, '//', location.host,"/upload"].join('');
@@ -36,11 +101,10 @@ class voiceMain  extends React.Component {
 			.then(response => {
 				let updatedFiles = this.state.files;
 				updatedFiles[this.state.selected].uploaded = true;
-				this.setState({files : updatedFiles, uploading:true});
-				console.log("upload file response",response);
+				this.setState({files : updatedFiles, uploading:false});
 			})
 			.catch(error => {
-				this.setState({uploading:true});
+				this.setState({uploading:false});
 				console.log("upload file error",error);
 			});
 	}
@@ -65,7 +129,7 @@ class voiceMain  extends React.Component {
 		}
 		return (
 			<div className={"voiceMain"} style={{"width":"100%","height":"72.5%"}}>
-				<div className="recordButton" style={{"width":"96%","height":"24%",
+				<div className="recordButton" style={{"width":"96%","height":"20%",
 					"margin":"2%","border":"solid white","borderWidth":"1px"}}
 				>
 					<RecorderButton addAudioFile={this.addAudioFile}/>
@@ -93,6 +157,19 @@ class voiceMain  extends React.Component {
 							{uploadable?"Upload Audio":""}
 						</div>	
 					</div>
+					<div style={{"height":"30%","width":"96%","marginLeft":"2%","marginRight":"2%","float":"left"}}>
+						<div style={{"height":"10%","width":"100%","float":"left"}}/>
+						<div style={{"height":"80%","width":"33%","float":"left"}}>
+							<WidgetGraph />
+						</div>
+						<div style={{"height":"80%","width":"33%","float":"left"}}>
+							<WidgetGraph />
+						</div>
+						<div style={{"height":"80%","width":"33%","float":"left"}}>
+							<WidgetGraph />
+						</div>
+						<div style={{"height":"10%","width":"100%","float":"left"}}/>
+					</div>
 				</div>
 				<AudioFiles jwt={this.props.jwt} selected={this.state.selected} files={this.state.files} selectFile={this.selectFile} />
 			</div>
@@ -105,7 +182,6 @@ class voiceMain  extends React.Component {
 				return response.json();
 			})
 			.then(responseJson => {
-				console.log(responseJson);
 				let newFiles = this.state.files;
 				responseJson.file_names.forEach(name => {
 					newFiles.push({name: name, uploaded: true})
@@ -115,4 +191,4 @@ class voiceMain  extends React.Component {
 			.catch(error => console.log("file list error", error));
 	}
 }
-export default voiceMain;
+export default VoiceMain;

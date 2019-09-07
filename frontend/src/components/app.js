@@ -14,7 +14,7 @@ class App extends React.Component {
 	}
 
 	render() {
-		if(true || (this.state.jwt != undefined && this.state.username != undefined)){
+		if(this.state.jwt != undefined && this.state.username != undefined){
 			return (
 				<div className="app" style={{"width":"100%","minWidth":"300px","maxWidth":"700px","height":"200%", "minHeight":"1700px", "margin":"0 auto", 
 					"backgroundColor":"#2f52a2","font-family":"Arial"}}
