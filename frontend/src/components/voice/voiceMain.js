@@ -59,15 +59,29 @@ class voiceMain  extends React.Component {
 
 			console.table(this.zip([frequencies, magnitudes]));
 			
-			let signal= fft.ifft(phasors);
+			let cepstrum= fft.ifft(phasors);
 
-			console.log("ifft signal is: ",signal);
+			console.log("ifft signal is: ",cepstrum);
 
-			let lr = this.linearRegression(signal.map(r => r[0]), [...Array(signal.length).keys()])
+			let lr = this.linearRegression(cepstrum.map(r => r[0]), [...Array(cepstrum.length).keys()])
 
 			console.log(lr)
+
+			let arg_max_cepstrum = this.argMax(cepstrum.map(r => r[0]))
+
+			let CPPs_val = cepstrum[arg_max_cepstrum][0] - (lr.slope * arg_max_cepstrum + lr.intercept)
+
+			console.log("CPPs is:", CPPs_val)
+			console.log("arg_max_cepstrum is:", arg_max_cepstrum)
+			console.log("max_cepstrum is:", cepstrum[arg_max_cepstrum][0])
+
+			console.log("Normalised CPPs is:", 100*CPPs_val/cepstrum[arg_max_cepstrum][0], "%")
 		  };
 	}
+
+	argMax(array) {
+		return [].map.call(array, (x, i) => [x, i]).reduce((r, a) => (a[0] > r[0] ? a : r))[1];
+	  }
 
 	zip(arrays){
 		return arrays[0].map(function(_,i){
