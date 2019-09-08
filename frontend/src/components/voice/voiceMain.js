@@ -45,14 +45,14 @@ class VoiceMain  extends React.Component {
 		// let s = [1,0,1,0];
 		// array = array.concat(Array((Math.pow(2, Math.ceil(Math.log2(array.length))) - array.length)).fill(0));
 		let phasors= fft.fft(chunk);
-		phasors = phasors.slice(0,65536)
+		phasors = phasors.slice(0,256)
 
-		
 
 		let frequencies = fft.util.fftFreq(phasors, 8000) // Sample rate and coef is just used for length, and frequency step
 		let magnitudes = fft.util.fftMag(phasors); 
 		
 		let cepstrum= fft.ifft(phasors);
+
 
 		// console.log("ifft signal is: ",cepstrum);
 
@@ -69,15 +69,18 @@ class VoiceMain  extends React.Component {
 		// console.log("max_cepstrum is:", cepstrum[arg_max_cepstrum][0])
 
 		// console.log("Normalised CPPs is:", 100*CPPs_val/cepstrum[arg_max_cepstrum][0], "%")
-		return CPPs_val
+		return [CPPs_val, phasors.map((r) => r[0]), cepstrum.map((r) => r[0])]
 
 	}
 
 	processChunk(chunk){
 		chunk = chunk[0]
-		this.setState({chunk:chunk});
+		let [CPPs_val, phasors, cepstrum] = this.get_CPPS(chunk)
+		this.setState({chunk:chunk, CPPs_val:CPPs_val, phasors:phasors, cepstrum:cepstrum});
 		console.log("this is the chunk:", chunk);
-		console.log("CPPs for chunk:", this.get_CPPS(chunk));
+		console.log("this is the phasor:", phasors);
+		console.log("this is the cepstrum:", cepstrum);
+		console.log("CPPs for chunk:",CPPs_val);
 	}
 
 	argMax(array) {
@@ -186,10 +189,10 @@ class VoiceMain  extends React.Component {
 							<WidgetGraph data={this.state.chunk}/>
 						</div>
 						<div style={{"height":"80%","width":"33%","float":"left"}}>
-							<WidgetGraph />
+							<WidgetGraph data={this.state.phasors}/>
 						</div>
 						<div style={{"height":"80%","width":"33%","float":"left"}}>
-							<WidgetGraph />
+							<WidgetGraph data={this.state.cepstrum}/>
 						</div>
 						<div style={{"height":"10%","width":"100%","float":"left"}}/>
 					</div>
