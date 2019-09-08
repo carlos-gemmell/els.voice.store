@@ -22,9 +22,10 @@ class VoiceMain  extends React.Component {
 		this.addAudioFile = this.addAudioFile.bind(this);
 		this.upload = this.upload.bind(this);
 		this.selectFile = this.selectFile.bind(this);
-		this.get_CPPS_from_blob = this.get_CPPS_from_blob.bind(this);
-		this.zip = this.zip.bind(this);
-		this.linearRegression = this.linearRegression.bind(this);
+		// this.get_CPPS_from_blob = this.get_CPPS_from_blob.bind(this);
+		// this.zip = this.zip.bind(this);
+		// this.linearRegression = this.linearRegression.bind(this);
+		this.processChunk = this.processChunk.bind(this);
 	}
 	addAudioFile(blob,url){
 		let newFiles = this.state.files;
@@ -34,46 +35,49 @@ class VoiceMain  extends React.Component {
 		console.log("finished recording")
 
 		// calculate CPPS after recording has concluded
-		this.get_CPPS_from_blob(blob)
+		// this.get_CPPS_from_blob(blob)
 	}
 
-	get_CPPS_from_blob(blob){
-		let fileReader = new FileReader();
+	get_CPPS(chunk){
+		// let arrayBuffer = chunk;
+		// let typedArray = new Uint8Array(arrayBuffer);
+		// let array = Array.from(typedArray);
+		// let s = [1,0,1,0];
+		// array = array.concat(Array((Math.pow(2, Math.ceil(Math.log2(array.length))) - array.length)).fill(0));
+		let phasors= fft.fft(chunk);
+		phasors = phasors.slice(0,65536)
 
-		fileReader.readAsArrayBuffer(blob);
-		fileReader.onload = (event) => {
-			let arrayBuffer = fileReader.result;
-			let typedArray = new Uint8Array(arrayBuffer);
-			let array = Array.from(typedArray);
-			let s = [1,0,1,0];
-			array = array.concat(Array((Math.pow(2, Math.ceil(Math.log2(array.length))) - array.length)).fill(0));
-			let phasors= fft.fft(array);
-			phasors = phasors.slice(0,65536)
+		
 
-			
+		let frequencies = fft.util.fftFreq(phasors, 8000) // Sample rate and coef is just used for length, and frequency step
+		let magnitudes = fft.util.fftMag(phasors); 
+		
+		let cepstrum= fft.ifft(phasors);
 
-			let frequencies = fft.util.fftFreq(phasors, 8000) // Sample rate and coef is just used for length, and frequency step
-			let magnitudes = fft.util.fftMag(phasors); 
-			
-			let cepstrum= fft.ifft(phasors);
+		// console.log("ifft signal is: ",cepstrum);
 
-			console.log("ifft signal is: ",cepstrum);
+		let lr = this.linearRegression(cepstrum.map(r => r[0]), [...Array(cepstrum.length).keys()])
 
-			let lr = this.linearRegression(cepstrum.map(r => r[0]), [...Array(cepstrum.length).keys()])
+		// console.log(lr)
 
-			console.log(lr)
+		let arg_max_cepstrum = this.argMax(cepstrum.map(r => r[0]))
 
-			let arg_max_cepstrum = this.argMax(cepstrum.map(r => r[0]))
+		let CPPs_val = cepstrum[arg_max_cepstrum][0] - (lr.slope * arg_max_cepstrum + lr.intercept)
 
-			let CPPs_val = cepstrum[arg_max_cepstrum][0] - (lr.slope * arg_max_cepstrum + lr.intercept)
+		// console.log("CPPs is:", CPPs_val)
+		// console.log("arg_max_cepstrum is:", arg_max_cepstrum)
+		// console.log("max_cepstrum is:", cepstrum[arg_max_cepstrum][0])
 
-			console.log("CPPs is:", CPPs_val)
-			console.log("arg_max_cepstrum is:", arg_max_cepstrum)
-			console.log("max_cepstrum is:", cepstrum[arg_max_cepstrum][0])
+		// console.log("Normalised CPPs is:", 100*CPPs_val/cepstrum[arg_max_cepstrum][0], "%")
+		return CPPs_val
 
-			console.log("Normalised CPPs is:", 100*CPPs_val/cepstrum[arg_max_cepstrum][0], "%")
+	}
 
-		  };
+	processChunk(chunk){
+		chunk = chunk[0]
+		this.setState({chunk:chunk});
+		console.log("this is the chunk:", chunk);
+		console.log("CPPs for chunk:", this.get_CPPS(chunk));
 	}
 
 	argMax(array) {
@@ -151,7 +155,7 @@ class VoiceMain  extends React.Component {
 				<div className="recordButton" style={{"width":"96%","height":"20%",
 					"margin":"2%","border":"solid white","borderWidth":"1px"}}
 				>
-					<RecorderButton addAudioFile={this.addAudioFile}/>
+					<RecorderButton processChunk={this.processChunk} addAudioFile={this.addAudioFile}/>
 				</div>
 				<div className="analysisSection" style={{"width":"96%" ,"height":"18%",
 					"margin":"2%","border":"solid white","borderWidth":"1px"}}
@@ -179,7 +183,7 @@ class VoiceMain  extends React.Component {
 					<div style={{"height":"30%","width":"96%","marginLeft":"2%","marginRight":"2%","float":"left"}}>
 						<div style={{"height":"10%","width":"100%","float":"left"}}/>
 						<div style={{"height":"80%","width":"33%","float":"left"}}>
-							<WidgetGraph />
+							<WidgetGraph data={this.state.chunk}/>
 						</div>
 						<div style={{"height":"80%","width":"33%","float":"left"}}>
 							<WidgetGraph />

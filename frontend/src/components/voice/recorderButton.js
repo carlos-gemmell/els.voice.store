@@ -25,7 +25,7 @@ class RecorderButton extends React.Component {
 
 			gumStream = stream;
 			let input = audioContext.createMediaStreamSource(stream);
-			rec = new Recorder(input,{numChannels:1});
+			rec = new Recorder(input,{numChannels:1}, this.props.processChunk);
 			rec.record();
 			this.setState({recording:true});
 		});
