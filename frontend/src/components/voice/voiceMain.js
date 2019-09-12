@@ -182,14 +182,17 @@ class VoiceMain  extends React.Component {
 					</div>
 					<div style={{"height":"30%","width":"96%","marginLeft":"2%","marginRight":"2%","float":"left"}}>
 						<div style={{"height":"10%","width":"100%","float":"left"}}/>
-						<div style={{"height":"80%","width":"33%","float":"left"}}>
-							<WidgetGraph data={this.state.chunk}/>
+						<div style={{"height":"80%","width":"25%","float":"left"}}>
+							<WidgetGraph marginRight={0.05} marginLeft={0.05} data={this.state.chunk}/>
 						</div>
-						<div style={{"height":"80%","width":"33%","float":"left"}}>
-							<WidgetGraph />
+						<div style={{"height":"80%","width":"25%","float":"left"}}>
+							<WidgetGraph marginRight={0.05} marginLeft={0.05}/>
 						</div>
-						<div style={{"height":"80%","width":"33%","float":"left"}}>
-							<WidgetGraph />
+						<div style={{"height":"80%","width":"25%","float":"left"}}>
+							<WidgetGraph marginRight={0.05} marginLeft={0.05}/>
+						</div>
+						<div style={{"height":"80%","width":"25%","float":"left"}}>
+						
 						</div>
 						<div style={{"height":"10%","width":"100%","float":"left"}}/>
 					</div>

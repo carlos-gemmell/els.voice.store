@@ -28,10 +28,11 @@ class WidgetGraph extends React.Component{
 		this.width = this.mainDiv.clientWidth
 		this.showAxis = this.props.showAxis || this.defaultValues().showAxis
 		this.lineColor = this.props.lineColor || this.defaultValues().lineColor
-		this.topMargin = 0
-		this.bottomMargin = 0
-		this.leftMargin = 0
-		this.rightMargin = 0
+		this.topMargin = this.props.marginTop*this.height || 0
+		this.bottomMargin = this.props.marginBottom*this.height || 0
+		this.leftMargin = this.props.marginLeft*this.width || 0
+		this.rightMargin = this.props.marginRight*this.width || 0
+		console.log(this.props.marginRight,this.rightMargin)
 	}
 	createGraph(){
 
