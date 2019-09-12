@@ -43,13 +43,13 @@ class RecorderButton extends React.Component {
 	render() {
 		return (
 			<div style={{"width":"100%","height":"100%"}}>
-				<div style={{"height":"5%","width":"100%"}}></div>
-				<img style={{"height":"90%", "width": "100%","objectFit":"contain"}} className="RecordingButton" 
+				<div style={{"height":"8%","width":"100%"}}></div>
+				<img style={{"height":"84%", "width": "100%","objectFit":"contain"}} className="RecordingButton" 
 					onClick={ (this.state.recording)?this.stopRecording:this.startRecording } 
 					touchEnd={ (this.state.recording)?this.stopRecording:this.startRecording } 
 					src={ (this.state.recording)?activeMicrophone:deactivatedMicrophone}
 				/>
-				<div style={{"height":"5%","width":"100%","color":"white","fontSize":"20px","textAlign":"center"}}>
+				<div style={{"height":"8%","width":"100%"}}>
 				</div>
 				<div style={{"position":"relative","fontWeight":"bold","bottom":"40px","color":"white","fontSize":"30px","textAlign":"center"}}>
 					{!this.state.recording?"Record Audio":""}

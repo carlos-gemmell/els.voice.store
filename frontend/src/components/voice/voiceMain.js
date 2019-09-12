@@ -17,7 +17,8 @@ class VoiceMain  extends React.Component {
 			selected: -1,
 			playing: false,
 			uploading: false,
-			audio: new Audio()
+			audio: new Audio(),
+			CPPs_val: 0
 		};
 		this.addAudioFile = this.addAudioFile.bind(this);
 		this.upload = this.upload.bind(this);
@@ -45,18 +46,24 @@ class VoiceMain  extends React.Component {
 		// let s = [1,0,1,0];
 		// array = array.concat(Array((Math.pow(2, Math.ceil(Math.log2(array.length))) - array.length)).fill(0));
 		let phasors= fft.fft(chunk);
-		phasors = phasors.slice(0,65536)
+		phasors = phasors.slice(0,256);
+		phasors = phasors.map((value) => {
+			value[1] = 0;
+			return value;
+		});
+		console.log("phasors",phasors);
 
-		
 
 		let frequencies = fft.util.fftFreq(phasors, 8000) // Sample rate and coef is just used for length, and frequency step
 		let magnitudes = fft.util.fftMag(phasors); 
-		
+		console.log("1");	
 		let cepstrum= fft.ifft(phasors);
+		console.log("2");
 
 		// console.log("ifft signal is: ",cepstrum);
 
 		let lr = this.linearRegression(cepstrum.map(r => r[0]), [...Array(cepstrum.length).keys()])
+		console.log("3");
 
 		// console.log(lr)
 
@@ -64,20 +71,24 @@ class VoiceMain  extends React.Component {
 
 		let CPPs_val = cepstrum[arg_max_cepstrum][0] - (lr.slope * arg_max_cepstrum + lr.intercept)
 
+		console.log("4");
 		// console.log("CPPs is:", CPPs_val)
 		// console.log("arg_max_cepstrum is:", arg_max_cepstrum)
 		// console.log("max_cepstrum is:", cepstrum[arg_max_cepstrum][0])
 
 		// console.log("Normalised CPPs is:", 100*CPPs_val/cepstrum[arg_max_cepstrum][0], "%")
-		return CPPs_val
+		return [CPPs_val, phasors.map((r) => r[0]), cepstrum.map((r) => r[0])]
 
 	}
 
 	processChunk(chunk){
 		chunk = chunk[0]
-		this.setState({chunk:chunk});
-		console.log("this is the chunk:", chunk);
-		console.log("CPPs for chunk:", this.get_CPPS(chunk));
+		let [CPPs_val, phasors, cepstrum] = this.get_CPPS(chunk)
+		this.setState({chunk:chunk, CPPs_val:Math.floor(CPPs_val*10)/10, phasors:phasors, cepstrum:cepstrum});
+		//console.log("this is the chunk:", chunk);
+		//console.log("this is the phasor:", phasors);
+		//console.log("this is the cepstrum:", cepstrum);
+		//console.log("CPPs for chunk:",CPPs_val);
 	}
 
 	argMax(array) {
@@ -91,28 +102,28 @@ class VoiceMain  extends React.Component {
 	}
 
 	linearRegression(y,x){
-        var lr = {};
-        var n = y.length;
-        var sum_x = 0;
-        var sum_y = 0;
-        var sum_xy = 0;
-        var sum_xx = 0;
-        var sum_yy = 0;
+		var lr = {};
+		var n = y.length;
+		var sum_x = 0;
+		var sum_y = 0;
+		var sum_xy = 0;
+		var sum_xx = 0;
+		var sum_yy = 0;
 
-        for (var i = 0; i < y.length; i++) {
+		for (var i = 0; i < y.length; i++) {
 
-            sum_x += x[i];
-            sum_y += y[i];
-            sum_xy += (x[i]*y[i]);
-            sum_xx += (x[i]*x[i]);
-            sum_yy += (y[i]*y[i]);
-        } 
+		    sum_x += x[i];
+		    sum_y += y[i];
+		    sum_xy += (x[i]*y[i]);
+		    sum_xx += (x[i]*x[i]);
+		    sum_yy += (y[i]*y[i]);
+		} 
 
-        lr['slope'] = (n * sum_xy - sum_x * sum_y) / (n*sum_xx - sum_x * sum_x);
-        lr['intercept'] = (sum_y - lr.slope * sum_x)/n;
-        lr['r2'] = Math.pow((n*sum_xy - sum_x*sum_y)/Math.sqrt((n*sum_xx-sum_x*sum_x)*(n*sum_yy-sum_y*sum_y)),2);
+		lr['slope'] = (n * sum_xy - sum_x * sum_y) / (n*sum_xx - sum_x * sum_x);
+		lr['intercept'] = (sum_y - lr.slope * sum_x)/n;
+		lr['r2'] = Math.pow((n*sum_xy - sum_x*sum_y)/Math.sqrt((n*sum_xx-sum_x*sum_x)*(n*sum_yy-sum_y*sum_y)),2);
 
-        return lr;
+		return lr;
 	}
 
 	upload(){
@@ -150,9 +161,11 @@ class VoiceMain  extends React.Component {
 			playable = true;
 			uploadable = !this.state.files[this.state.selected].uploaded;
 		}
+		let graphStyles={"height":"60%","width":"100%"};
+		let graphTextStyles={"height":"40%","width":"100%","fontWeight":"normal","color":"white","fontSize":"20px","overflow":"hidden","textAlign":"center"};
 		return (
 			<div className={"voiceMain"} style={{"width":"100%","height":"72.5%"}}>
-				<div className="recordButton" style={{"width":"96%","height":"20%",
+				<div className="recordButton" style={{"width":"96%","height":"17%",
 					"margin":"2%","border":"solid white","borderWidth":"1px"}}
 				>
 					<RecorderButton processChunk={this.processChunk} addAudioFile={this.addAudioFile}/>
@@ -160,7 +173,7 @@ class VoiceMain  extends React.Component {
 				<div className="analysisSection" style={{"width":"96%" ,"height":"18%",
 					"margin":"2%","border":"solid white","borderWidth":"1px"}}
 				>
-					<div style={{"height":"70%","width":"50%","float":"left"}}>
+					<div style={{"height":"60%","width":"50%","float":"left"}}>
 						<div style={{"height":"7%","width":"100%"}}/>
 						<img style={{"height":"68%","width":"100%","objectFit":"contain","opacity": (playable)?"1":"0.5"}}
 							onClick={ (playable && !this.state.playing)? () =>  this.playAudio() : () => {} }
@@ -170,7 +183,7 @@ class VoiceMain  extends React.Component {
 							{playable?"Play Audio":""}
 						</div>	
 					</div>
-					<div style={{"height":"70%","width":"50%","float":"left"}}>
+					<div style={{"height":"60%","width":"50%","float":"left"}}>
 						<div style={{"height":"7%","width":"100%"}}/>
 						<img style={{"height":"68%","width":"100%","objectFit":"contain","float":"left","opacity": (uploadable) ?"1":"0.5"}}
 							onClick={ (uploadable && !this.state.uploading)?() => this.upload():() => {} }
@@ -180,22 +193,41 @@ class VoiceMain  extends React.Component {
 							{uploadable?"Upload Audio":""}
 						</div>	
 					</div>
-					<div style={{"height":"30%","width":"96%","marginLeft":"2%","marginRight":"2%","float":"left"}}>
+					<div style={{"height":"40%","width":"96%","marginLeft":"2%","marginRight":"2%","float":"left"}}>
 						<div style={{"height":"10%","width":"100%","float":"left"}}/>
-						<div style={{"height":"80%","width":"25%","float":"left"}}>
-							<WidgetGraph marginRight={0.05} marginLeft={0.05} data={this.state.chunk}/>
+						<div style={{"height":"90%","width":"25%","float":"left"}}>
+							<div style={graphStyles}>
+								<WidgetGraph marginRight={0.05} marginLeft={0.05} data={this.state.chunk}/>
+							</div>
+							<div style={graphTextStyles}>
+								Audio
+							</div>
 						</div>
-						<div style={{"height":"80%","width":"25%","float":"left"}}>
-							<WidgetGraph marginRight={0.05} marginLeft={0.05}/>
+						<div style={{"height":"90%","width":"25%","float":"left"}}>
+							<div style={graphStyles}>
+								<WidgetGraph marginRight={0.05} marginLeft={0.05} data={this.state.phasors}/>
+							</div>
+							<div style={graphTextStyles}>
+								Frequency
+							</div>
 						</div>
-						<div style={{"height":"80%","width":"25%","float":"left"}}>
-							<WidgetGraph marginRight={0.05} marginLeft={0.05}/>
+						<div style={{"height":"90%","width":"25%","float":"left"}}>
+							<div style={graphStyles}>
+								<WidgetGraph marginRight={0.05} marginLeft={0.05} data={this.state.cepstrum}/>
+							</div>
+							<div style={graphTextStyles}>
+								Quefrency
+							</div>
 						</div>
-						<div style={{"height":"80%","width":"25%","float":"left"}}>
-						
+						<div style={{"height":"90%","width":"25%","float":"left"}}>
+							<div style={{"height":"60%","width":"100%","fontWeight":"bold","color":"white","fontSize":"35px","textAlign":"center"}}>
+								{this.state.CPPs_val}%
+							</div>
+							<div style={{"height":"40%","width":"100%","fontWeight":"bold","color":"white","fontSize":"30px","textAlign":"center"}}>
+								CPPs
+							</div>
 						</div>
-						<div style={{"height":"10%","width":"100%","float":"left"}}/>
-					</div>
+					</div> 
 				</div>
 				<AudioFiles jwt={this.props.jwt} selected={this.state.selected} files={this.state.files} selectFile={this.selectFile} />
 			</div>
