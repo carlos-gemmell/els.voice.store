@@ -13,7 +13,7 @@ class guide extends React.Component {
 
 	toggle_height(){
 		if (this.state["maxHeight"] == "5%"){
-			this.setState({"maxHeight":"15%"});
+			this.setState({"maxHeight":"25%"});
 		}
 		else{
 			this.setState({"maxHeight":"5%"});
@@ -29,7 +29,7 @@ class guide extends React.Component {
 				"color":"white"}} 
 				onClick={this.toggle_height}
 			>
-				<h1>ELS Voice Store Application</h1>
+				<b>ELS Voice Store Application</b><br />
 				Store anonymous patient voice recordings for future analysis.<br />
 				<br />
 				Record the patient placing the microphone 10cms from their mouth 45 degrees to the side.<br />
