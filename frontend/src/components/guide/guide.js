@@ -29,7 +29,7 @@ class guide extends React.Component {
 				"color":"white"}} 
 				onClick={this.toggle_height}
 			>
-				<h2>ELS Voice Store Application</h2>
+				<b>ELS Voice Store Application<b />
 				Store anonymous patient voice recordings for future analysis.<br />
 				<br />
 				Place the microphone 10cms from the patient and at 45 degrees to the side in order
