@@ -31,7 +31,7 @@ class guide extends React.Component {
 			>
 				<h1>ELS Voice Store Application</h1>
 				Store anonymous patient voice recordings for future analysis.<br>
-				<p>
+				<br>
 				Record the patient placing the microphone 10cms from their mouth 45 degrees to the side.<br>
 				1 - Press the microphone icon to start recording. <br>
 				Explain to the patient that their voice will be recorded and stored anonymously 
@@ -50,7 +50,7 @@ class guide extends React.Component {
 				Again note the CPPs for this recording.
 				7 - Optional: Record the patient describing their voice problems<br>
 				Note the CPPs value here to if desired.
-				<p>
+				<br>
 				Note that files are only visbile to you and the ELS Voice Store administrators and
 				they contain no patient specific information.<br>
 				Files are stored and ordered by date and time of recording. 
