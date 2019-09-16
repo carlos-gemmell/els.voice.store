@@ -29,7 +29,7 @@ class guide extends React.Component {
 				"color":"white"}} 
 				onClick={this.toggle_height}
 			>
-				<b>ELS Voice Store Application4</b><br />
+				<b>The ELS Voice Store Application</b><br /><br />
 				Store anonymous patient voice recordings for future analysis.<br />
 				<br />
 				Place the microphone 10cms from the patient and at 45 degrees to the side in order
@@ -46,14 +46,16 @@ class guide extends React.Component {
 				Keep background noise low.<br /><br />
 				5 - Note the CPPs value displayed on the screeen in the patient's medical 
 				record for this recording and upload this to the cloud<br /><br />
-				6 - Record the patient repeating a sentence with no fricatives (without sounds "s", "f" "z" etc.) such as:<br />
-					"Eat, drink and be merry" or "hard work never did anyone any harm".<br />
+				6 - Record the patient repeating a sentence with no fricatives 
+				(without sounds "s", "f" "z" etc.) such as:<br />
+					<b>"Eat, drink and be merry"</b> or 
+					<b>"hard work never did anyone any harm"</b>.<br />
 				Again note the CPPs for this recording and upload it to the cloud.<br /><br />
 				7 - Optional: Record the patient describing their voice problems.<br />
 				Note the CPPs value here too if desired and upload to the cloud as well.
 				<br /><br />
-				Note that files are only visbile to you and the ELS Voice Store administrators and
-				contain no patient specific information.<br />
+				<b>Note that files are only visbile to you and the ELS Voice Store administrators and
+				contain no patient specific information.</b><br />
 				Files are stored and ordered by date and time of recording. 
 				You can review previous recordings by looking in the file list below for the 
 				recordings corresponding to the date and time of the patient's appointment.
