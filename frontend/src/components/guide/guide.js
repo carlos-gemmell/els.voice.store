@@ -23,7 +23,7 @@ class guide extends React.Component {
 	render() {
 		return (
 			<div className={"guide"} style={{"transition": "max-height 1000ms ease-in-out", 
-				"overflow":"hidden", "width":"91.8%","height":"auto", "maxHeight":this.state["maxHeight"], 
+				"overflow":"scroll", "width":"91.8%","height":"auto", "maxHeight":this.state["maxHeight"], 
 				"border":"solid white","borderWidth":"1px", "margin":"2%",
 				"padding":"2%",
 				"color":"white"}} 
