@@ -29,9 +29,11 @@ class guide extends React.Component {
 				"color":"white"}} 
 				onClick={this.toggle_height}
 			>
+				<b>ELS Voice Store Application</b>
+				Store anonymous patient voice recordings for future analysis.<br />
 				Guide to use the application:<br />
-				1 - do something <br />
-				2 - do something else <br />
+				1 - Explain to the patient that their voice will be recorded and stored anonymously in the ELS cloud for future analysis.<br />
+				2 - If they agre then record them saying<br />
 				3 - last thing to do because its simple!
 				foo <br/>
 				foo <br/>
