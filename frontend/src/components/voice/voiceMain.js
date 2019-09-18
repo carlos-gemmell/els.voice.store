@@ -221,7 +221,7 @@ class VoiceMain  extends React.Component {
 						</div>
 						<div style={{"height":"90%","width":"25%","float":"left"}}>
 							<div style={{"height":"60%","width":"100%","fontWeight":"bold","color":"white","fontSize":"35px","textAlign":"center"}}>
-								{this.state.CPPs_val}%
+								{this.state.CPPs_val}dB
 							</div>
 							<div style={{"height":"40%","width":"100%","fontWeight":"bold","color":"white","fontSize":"30px","textAlign":"center"}}>
 								CPPs
